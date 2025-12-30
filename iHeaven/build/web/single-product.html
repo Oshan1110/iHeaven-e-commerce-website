@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>iHeaven - Premium Mobile Phones</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+        <style>
+            .product-image {
+                transition: all 0.3s ease;
+            }
+
+            .product-image:hover {
+                transform: scale(1.02);
+            }
+
+            .thumbnail {
+                cursor: pointer;
+                transition: all 0.2s ease;
+                border: 2px solid transparent;
+            }
+
+            .thumbnail:hover {
+                border-color: #3b82f6;
+            }
+
+            .thumbnail.active {
+                border-color: #3b82f6;
+                transform: scale(1.05);
+                border: 2px solid #0070f3;
+            }
+
+            .quantity-btn {
+                transition: all 0.2s ease;
+            }
+
+            .quantity-btn:hover {
+                background-color: #e2e8f0;
+            }
+
+            .add-to-cart {
+                transition: all 0.3s ease;
+            }
+
+            .add-to-cart:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            }
+            @keyframes float {
+                0% {
+                    transform: translateY(0px);
+                }
+
+                50% {
+                    transform: translateY(-15px);
+                }
+
+                100% {
+                    transform: translateY(0px);
+                }
+            }
+
+            .floating {
+                animation: float 6s ease-in-out infinite;
+            }
+
+            .gradient-text {
+                background: linear-gradient(90deg, #2998ff, #ff00ea);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+
+            .product-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+
+            .nav-link::after {
+                content: '';
+                display: block;
+                width: 0;
+                height: 2px;
+                background: #3b82f6;
+                transition: width .3s;
+            }
+
+            .nav-link:hover::after {
+                width: 100%;
+            }
+            .search-container {
+                display: flex;
+                align-items: center;
+                gap: 4px; /* reduced gap */
+                margin-left: auto;
+                margin-right: 2px;
+                background: #f1f1f1;
+                padding: 3px 4px; /* reduced padding */
+                border-radius: 16px; /* slightly smaller */
+                transition: all 0.3s ease;
+            }
+
+            .search-container input {
+                border: none;
+                background: transparent;
+                outline: none;
+                padding: 4px;
+                width: 120px; /* reduced width */
+                font-size: 13px; /* optional: smaller text */
+                transition: width 0.3s ease;
+            }
+
+            .search-container button {
+                background: linear-gradient(to right, #4f46e5, #9333ea);
+                border: none;
+                padding: 6px 14px; /* reduced button size */
+                border-radius: 16px;
+                color: white;
+                cursor: pointer;
+                font-size: 12px;
+                font-weight: bold;
+            }
+
+            @media (max-width: 768px) {
+                .search-container input {
+                    width: 70px;
+                }
+
+                .search-container {
+                    margin-right: 8px;
+                }
+            }
+        </style>
+    </head>
+
+    <body class="bg-gray-50" onload="loadData();">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-lg sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 flex items-center">
+                            <i class="fab fa-apple text-gray-900 text-3xl mr-2"></i>
+                            <span class="text-xl font-bold text-gray-900">i<span class="gradient-text">Heaven</span></span>
+                        </div>
+                        <div class="hidden md:block">
+                            <div class="ml-10 flex items-baseline space-x-4">
+                                <a href="index.html"
+                                   class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Home</a>
+                                <a href="#products"
+                                   class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Products</a>
+                                <a href="#features"
+                                   class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Features</a>
+                                <a href="#testimonials"
+                                   class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Testimonials</a>
+                                <a href="#contact"
+                                   class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Contact</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-container">
+                        <input type="text" id="serchP" placeholder="Search products..." />
+                        <!--<a href="search-single.html">-->
+                        <button type="button" id="searchBtn" onclick="searchSingle()">Go</button>
+                        <!--</a>-->
+                    </div>
+                    <div class="ml-4 flex items-center md:ml-6">
+                        <button id="cart-button" class="ml-3 p-1 rounded-full text-gray-700 hover:text-blue-500 focus:outline-none" onclick="viewCart();">
+                            <i class="fas fa-shopping-cart h-6 w-6"></i>
+                        </button>
+                        <a href="my-account.html">
+                            <button class="ml-3 p-1 rounded-full text-gray-700 hover:text-blue-500 focus:outline-none">
+                                <!-- Account Icon Example -->
+                                <i class="fas fa-user h-6 w-6"></i>
+                            </button>
+                        </a>
+                        <a href="sign-in.html">
+                            <button
+                                class="ml-3 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full text-sm font-medium hover:opacity-90 transition duration-300">
+                                Sign In
+                            </button>
+                        </a>
+                    </div>
+
+                    <div class="-mr-2 flex md:hidden">
+                        <button id="mobile-menu-button"
+                                class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-500 focus:outline-none">
+                            <i class="fas fa-bars h-6 w-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a href="index.html"
+                       class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Home</a>
+
+                    <a href="#products"
+                       class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-500">Products</a>
+                    <a href="#features"
+                       class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-500">Features</a>
+                    <a href="#testimonials"
+                       class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-500">Testimonials</a>
+                    <a href="#contact"
+                       class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-500">Contact</a>
+                </div>
+                <div class="pt-4 pb-3 border-t border-gray-200">
+
+                </div> 
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+
+            <!-- Product Section -->
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Product Images -->
+                <div class="lg:w-1/2">
+                    <!-- Main Image -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden mb-4">
+                        <img id="image1"
+                             src=""
+                             alt="iPhone 15 Pro Max" class="w-full h-96 object-contain product-image">
+                    </div>
+
+                    <!-- Thumbnails -->
+                    <!-- Thumbnails -->
+                    <div class="flex gap-3">
+                        <div class="thumbnail w-1/3 rounded-lg overflow-hidden active"
+                             onclick="changeImage('thumb-image1');">
+                            <img id="thumb-image1" src="image1.jpg"
+                                 alt="iPhone 15 Pro Max Front" class="w-full h-24 object-cover">
+                        </div>
+                        <div class="thumbnail w-1/3 rounded-lg overflow-hidden"
+                             onclick="changeImage('thumb-image2');">
+                            <img id="thumb-image2" src="image2.jpg"
+                                 alt="iPhone 15 Pro Max Side" class="w-full h-24 object-cover">
+                        </div>
+                        <div class="thumbnail w-1/3 rounded-lg overflow-hidden"
+                             onclick="changeImage('thumb-image3');">
+                            <img id="thumb-image3" src="image3.jpg"
+                                 alt="iPhone 15 Pro Max Back" class="w-full h-24 object-cover">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Product Details -->
+                <div class="lg:w-1/2">
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <!-- Title and Published Date -->
+                        <div class="mb-4">
+                            <h1 id="product-title" class="text-2xl md:text-3xl font-bold text-gray-900">Apple iPhone 15 Pro Max</h1>
+                            <p class="text-sm text-gray-500 mt-1">Published: <span class="text-gray-700" id="published-on">October 15,
+                                    2023</span></p>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="mb-6">
+                            <p class="text-3xl font-bold text-blue-600">LKR <span id="product-price">350,000.00</span></p>
+                            <p class="text-sm text-gray-500">or $99.92/month for 12 months</p>
+                        </div>
+
+                        <!-- Category and Model -->
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <p class="text-sm text-gray-500">Category</p>
+                                <p class="font-medium" id="brand-name">Smartphones</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Model</p>
+                                <p class="font-medium" id="model-name">iPhone 15 Pro Max</p>
+                            </div>
+                        </div>
+
+                        <!-- Condition and Stock -->
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <p class="text-sm text-gray-500">Condition</p>
+                                <p class="font-medium flex items-center">
+                                    <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full mr-2" id="product-quality">New</span>
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">In Stock</p>
+                                <p class="font-medium text-green-600" id="product-stock">15 <span>Available</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Color and Storage Options -->
+                        <div class="mb-6">
+                            <div class="mb-4">
+                                <p class="text-sm text-gray-500 mb-2">Color</p>
+                                <div class="flex space-x-2">
+                                    <p class="font-medium text-green-600" id="color-background"></p>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 mb-2">Storage</p>
+                                <div class="flex space-x-2">
+                                    <button
+                                        class="px-3 py-1 border border-gray-300 rounded-md hover:bg-blue-50 hover:border-blue-500 focus:bg-blue-50 focus:border-blue-500 focus:ring-2 focus:ring-blue-200" id="product-storage">128GB</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quantity and Add to Cart -->
+                        <div class="mb-6">
+                            <p class="text-sm text-gray-500 mb-2">Quantity</p>
+                            <div class="flex items-center">
+                                <button
+                                    class="quantity-btn w-10 h-10 border border-gray-300 rounded-l-md flex items-center justify-center"
+                                    onclick="decreaseQuantity()">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" id="quantity" disabled value="1" min="1" max="15"
+                                       class="w-16 h-10 border-t border-b border-gray-300 text-center focus:outline-none focus:ring-2 focus:ring-blue-200">
+                                <button
+                                    class="quantity-btn w-10 h-10 border border-gray-300 rounded-r-md flex items-center justify-center"
+                                    onclick="increaseQuantity()">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button
+                            class="add-to-cart w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-full font-medium flex items-center justify-center" id="add-to-cart-main">
+                            <i class="fas fa-shopping-cart mr-2"></i>
+                            Add to Cart
+                        </button>
+                    </div>
+
+                    <!-- Delivery Info -->
+                    <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+                        <div class="flex items-start">
+                            <div class="text-blue-600 mr-4 mt-1">
+                                <i class="fas fa-truck text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-900 mb-1">Free Delivery & Returns</h3>
+                                <p class="text-sm text-gray-600">Free standard delivery on all orders. Free 30-day returns.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Description -->
+            <div class="bg-white rounded-xl shadow-md p-6 mt-8">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Product Description</h2>
+                <div class="prose max-w-none">
+                    <p id="description"></p>
+
+                </div>
+            </div>
+        </main>
+        <!-- Cart Sidebar -->
+        <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-50">
+            <div class="flex flex-col h-full">
+                <div class="flex justify-between items-center p-4 border-b">
+                    <h3 class="text-lg font-medium text-gray-900">Your Cart</h3>
+                    <button id="close-cart" class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div class="text-center py-10 text-gray-500" id="empty-cart-message">
+                        <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-4"></i>
+                        <p>Your cart is empty</p>
+                    </div>
+                </div>
+                <div class="border-t p-4">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Subtotal</span>
+                        <span  class="font-medium">LKR
+                            <span class="text-gray-500" id="cart-subtotal"> 0.00</span>
+                        </span>
+                    </div>
+                    <div class="flex justify-between mb-4">
+                        <span class="text-gray-600">Shipping</span>
+                        <span class="font-medium text-green-600">Free</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Subtotal</span>
+                        <span  class="font-medium">LKR
+                            <span class="text-gray-500" id="cart-total"> 0.00</span>
+                        </span>
+                    </div>
+                    <a href="cart.html">
+                        <button class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-full font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            View Cart
+                        </button>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <footer class="bg-gray-900 text-white pt-16 pb-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">iHeaven</h3>
+                        <p class="text-gray-400 text-sm">
+                            Welcome to iHeaven – Your trusted hub for buying and selling genuine Apple products. Discover innovation, trade with confidence
+                        </p>
+                        <div class="flex space-x-4 mt-4">
+                            <a href="#" class="text-gray-400 hover:text-white">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Shop</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">iPhone</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">iPad</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Mac</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Watch</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Accessories</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Support</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Contact Us</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">FAQs</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Shipping Policy</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Returns & Refunds</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Warranty</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Company</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">About Us</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Blog</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Careers</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Privacy Policy</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">
+                        &copy; 2025 iHeaven. All rights reserved.
+                    </p>
+                    <div class="flex space-x-6 mt-4 md:mt-0">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196578.png" alt="Visa" class="h-8">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196561.png" alt="Mastercard" class="h-8">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196566.png" alt="American Express" class="h-8">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196554.png" alt="PayPal" class="h-8">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196626.png" alt="Apple Pay" class="h-8">
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script>
+            const cartButton = document.getElementById('cart-button');
+            const closeCart = document.getElementById('close-cart');
+            const cartSidebar = document.getElementById('cart-sidebar');
+            // Open cart
+            cartButton.addEventListener('click', () => {
+                cartSidebar.classList.remove('translate-x-full');
+                document.body.style.overflow = 'hidden';
+            });
+
+            // Close cart
+            closeCart.addEventListener('click', () => {
+                cartSidebar.classList.add('translate-x-full');
+                document.body.style.overflow = 'auto';
+            });
+            // Mobile menu toggle
+            document.getElementById('mobile-menu-button').addEventListener('click', function () {
+                const menu = document.getElementById('mobile-menu');
+                menu.classList.toggle('hidden');
+            });
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+
+                        // Close mobile menu if open
+                        const mobileMenu = document.getElementById('mobile-menu');
+                        if (!mobileMenu.classList.contains('hidden')) {
+                            mobileMenu.classList.add('hidden');
+                        }
+                    }
+                });
+            });
+
+            // Add animation to elements when they come into view
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-fadeIn');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            document.querySelectorAll('.product-card, .bg-white').forEach(card => {
+                observer.observe(card);
+            });
+//
+//            closeCart.addEventListener('click', () => {
+//                
+//            });
+            // Mobile menu toggle
+            document.getElementById('mobile-menu-button').addEventListener('click', function () {
+                const menu = document.getElementById('mobile-menu');
+                menu.classList.toggle('hidden');
+            });
+            // Change main product image when thumbnail is clicked
+            function changeImage(thumbId) {
+                const mainImage = document.getElementById('image1');
+                const thumbImage = document.getElementById(thumbId);
+                mainImage.src = thumbImage.src;
+
+                // Optional: Highlight active thumbnail
+                document.querySelectorAll('.thumbnail').forEach(thumb => {
+                    thumb.classList.remove('active');
+                });
+                document.getElementById(thumbId).parentElement.classList.add('active');
+            }
+
+            // Quantity control functions
+            function increaseQuantity() {
+                const quantityInput = document.getElementById('quantity');
+                let currentValue = parseInt(quantityInput.value);
+                if (currentValue < 15) {
+                    quantityInput.value = currentValue + 1;
+                }
+            }
+
+            function decreaseQuantity() {
+                const quantityInput = document.getElementById('quantity');
+                let currentValue = parseInt(quantityInput.value);
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                }
+            }
+        </script>
+        <script src="assets/js/single-product.js"></script>
+        <script src="assets/js/go-to-search.js"></script>
+        <script src="assets/js/index.js"></script>
+        <script src="assets/js/content-loader.js"></script>
+        <script src="assets/js/send-message.js"></script>
+        <script src="assets/js/search-single.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+    </body>
+
+</html>

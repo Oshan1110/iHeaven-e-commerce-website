@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>iHeaven Verification Popup</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+        <style>
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes pulse {
+                0%, 100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.05);
+                }
+            }
+
+            .animate-fade-in {
+                animation: fadeIn 0.3s ease-out forwards;
+            }
+
+            .animate-pulse {
+                animation: pulse 2s infinite;
+            }
+
+            .verification-input {
+                width: 50px;
+                height: 60px;
+                font-size: 24px;
+                text-align: center;
+                margin: 0 5px;
+                border-radius: 10px;
+                border: 2px solid #e5e7eb;
+                transition: all 0.3s;
+            }
+
+            .verification-input:focus {
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+                outline: none;
+            }
+
+            .popup-content::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .popup-content::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 10px;
+            }
+
+            .popup-content::-webkit-scrollbar-thumb {
+                background: #c1c1c1;
+                border-radius: 10px;
+            }
+
+            .popup-content::-webkit-scrollbar-thumb:hover {
+                background: #a1a1a1;
+            }
+        </style>
+    </head>
+    <body class="bg-gray-100 flex items-center justify-center min-h-screen" onload="field();">
+
+        <!-- Verification Popup -->
+        <div id="verificationPopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-xl shadow-2xl overflow-hidden w-full max-w-md animate-fade-in">
+                <div class="bg-gradient-to-r from-black to-gray-800 p-6 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <i class="fab fa-apple text-white text-3xl"></i>
+                        <h2 class="text-white text-2xl font-bold">iHeaven</h2>
+                    </div>
+                </div>
+
+                <div class="popup-content p-6 max-h-[80vh] overflow-y-auto">
+                    <div class="text-center mb-6">
+                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                            <i class="fas fa-lock text-black-600 text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Verify Your OTP</h3>
+                        <p class="text-gray-600">We've sent a OTP code to your email</p>
+                    </div>
+
+
+                    <div class="mb-8 w-full">
+                        <label for="email" class="mb-2 text-xs font-medium text-gray-700 block">Email Address</label>
+                        <div class="flex">
+                            <input type="email" id="email"
+                                   class="verification-input w-full text-sm font-medium px-4 py-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button type="button" id="email-btn"
+                                    class="px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium rounded-r-lg hover:bg-blue-700 transition" onclick="sendEmail();">
+                                Send
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div class="mb-8 flex flex-col w-full">
+                        <label for="email" class="mb-2 text-sm font-medium text-gray-700">Verification Code</label>
+                        <input type="text" maxlength="100" class="verification-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               id="code">
+                    </div>
+
+                    <div class="text-center mb-2">
+                        <p class="text-gray-500 mb-1" id="message"></p>
+                    </div>
+
+                    <button id="verifyBtn" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 disabled:bg-gray-400 disabled:cursor-not-allowed" onclick="otpVerify();">
+                        <span>Verify & Continue</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+
+                    <div class="mt-6 text-center text-sm text-gray-500">
+                        <p>By continuing, you agree to iHeaven's <a href="#" class="text-blue-600 hover:underline">Terms of Service</a> and <a href="#" class="text-blue-600 hover:underline">Privacy Policy</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const closePopupBtn = document.getElementById('closePopupBtn');
+            const verificationPopup = document.getElementById('verificationPopup');
+            const verifyBtn = document.getElementById('verifyBtn');
+            const resendBtn = document.getElementById('resendBtn');
+            const verificationInputs = document.querySelectorAll('.verification-input');
+
+            function moveToNext(input) {
+                const index = parseInt(input.dataset.index);
+                input.value = input.value.replace(/[^0-9]/g, '');
+                if (input.value.length === 1 && index < 6) {
+                    document.querySelector(`.verification-input[data-index="${index + 1}"]`).focus();
+                }
+                checkVerificationCode();
+            }
+
+            function checkVerificationCode() {
+                let allFilled = true;
+                let code = '';
+                verificationInputs.forEach(input => {
+                    if (input.value.length === 0)
+                        allFilled = false;
+                    code += input.value;
+                });
+                verifyBtn.disabled = !allFilled;
+                return code;
+            }
+
+
+            function resetVerification() {
+                verificationInputs.forEach(input => input.value = '');
+                verifyBtn.disabled = true;
+                verifyBtn.innerHTML = '<span>Verify & Continue</span><i class="fas fa-arrow-right ml-2"></i>';
+
+            }
+
+            // Allow backspace to move to previous input
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Backspace') {
+                    const active = document.activeElement;
+                    if (active.classList.contains('verification-input') && active.value === '') {
+                        const index = parseInt(active.dataset.index);
+                        if (index > 1) {
+                            document.querySelector(`.verification-input[data-index="${index - 1}"]`).focus();
+                        }
+                    }
+                }
+            });
+
+        </script>
+        <!--        <script src="assets/js/verify-account.js"></script>
+                <script src="assets/js/resend-code.js"></script>-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+        <script src="assets/js/email-process.js"></script>
+        <script src="assets/js/otp-code-send.js"></script>
+
+    </body>
+</html>

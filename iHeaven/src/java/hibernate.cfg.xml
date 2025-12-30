@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC 
+      "-//Hibernate/Hibernate Configuration DTD 3.0//EN" 
+      "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+
+        <!-- Database connection settings -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/i_heaven?allowPublicKeyRetrieval=true&amp;useSSL=false</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">Adhiya2003#</property>
+        <property name="hibernate.show_sql">true</property>
+        <mapping class = "Hibernate.User"/>
+        <mapping class = "Hibernate.City"/>
+        <mapping class = "Hibernate.Address"/>
+        <mapping class = "Hibernate.Brand"/>
+        <mapping class = "Hibernate.Model"/>
+        <mapping class = "Hibernate.Color"/>
+        <mapping class = "Hibernate.Storage"/>
+        <mapping class = "Hibernate.Status"/>
+        <mapping class = "Hibernate.Quality"/>
+        <mapping class = "Hibernate.Product"/>
+        <mapping class = "Hibernate.Cart"/>
+        <mapping class = "Hibernate.Orders"/>
+        <mapping class = "Hibernate.OrderItem"/>
+        <mapping class = "Hibernate.OrderStatus"/>
+        <mapping class = "Hibernate.UserFeedback"/>
+    </session-factory>
+</hibernate-configuration>
+

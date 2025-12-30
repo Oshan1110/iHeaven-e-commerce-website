@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>iHeaven - Premium Apple Products</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="assets/css/style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+        <style>
+            @keyframes float {
+                0% {
+                    transform: translateY(0px);
+                }
+
+                50% {
+                    transform: translateY(-15px);
+                }
+
+                100% {
+                    transform: translateY(0px);
+                }
+            }
+
+            /* From Uiverse.io by Bodyhc */
+            .navbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 30px;
+                flex-wrap: wrap;
+            }
+
+            .nav-left {
+                display: flex;
+                align-items: center;
+                gap: 30px;
+                flex-wrap: wrap;
+            }
+
+            .nav-right {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                flex-wrap: wrap;
+            }
+
+            .floating {
+                animation: float 6s ease-in-out infinite;
+            }
+
+            .gradient-text {
+                background: linear-gradient(90deg, #2998ff, #ff00ea);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+
+            .product-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+
+            .nav-link::after {
+                content: '';
+                display: block;
+                width: 0;
+                height: 2px;
+                background: #3b82f6;
+                transition: width .3s;
+            }
+
+            .nav-link:hover::after {
+                width: 100%;
+            }
+            @keyframes scroll {
+                0% {
+                    transform: translateX(0%);
+                }
+                100% {
+                    transform: translateX(-100%);
+                }
+            }
+
+            .animate-scroll {
+                animation: scroll 30s linear infinite;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+
+            .search-container {
+                display: flex;
+                align-items: center;
+                gap: 4px; /* reduced gap */
+                margin-left: auto;
+                margin-right: 2px;
+                background: #f1f1f1;
+                padding: 3px 4px; /* reduced padding */
+                border-radius: 16px; /* slightly smaller */
+                transition: all 0.3s ease;
+            }
+
+            .search-container input {
+                border: none;
+                background: transparent;
+                outline: none;
+                padding: 4px;
+                width: 120px; /* reduced width */
+                font-size: 13px; /* optional: smaller text */
+                transition: width 0.3s ease;
+            }
+
+            .search-container button {
+                background: linear-gradient(to right, #4f46e5, #9333ea);
+                border: none;
+                padding: 6px 14px; /* reduced button size */
+                border-radius: 16px;
+                color: white;
+                cursor: pointer;
+                font-size: 12px;
+                font-weight: bold;
+            }
+
+            @media (max-width: 768px) {
+                .search-container input {
+                    width: 70px;
+                }
+
+                .search-container {
+                    margin-right: 8px;
+                }
+            }
+
+        </style>
+    </head>
+
+    <body class="bg-gray-50 font-sans" onload="indexOnloadFunctions();">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-lg sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 flex items-center">
+                            <i class="fab fa-apple text-gray-900 text-3xl mr-2"></i>
+                            <span class="text-xl font-bold text-gray-900">i<span class="gradient-text">Heaven</span></span>
+                        </div>
+                        <div class="hidden md:block">
+                            <div class="ml-10 flex items-baseline space-x-4">
+                                <a href="index.html"
+                                   class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Home</a>
+                                <a href="#products"
+                                   class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Products</a>
+                                <a href="#features"
+                                   class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Features</a>
+                                <a href="#testimonials"
+                                   class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Testimonials</a>
+                                <a href="#contact"
+                                   class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Contact</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-container">
+                        <input type="text" id="serchP" placeholder="Search products..." />
+                        <!--<a href="search-single.html">-->
+                            <button type="button" id="searchBtn" onclick="searchSingle()">Go</button>
+                        <!--</a>-->
+                    </div>
+
+                    <div class="ml-4 flex items-center md:ml-6">
+                        <button id="cart-button" class="ml-3 p-1 rounded-full text-gray-700 hover:text-blue-500 focus:outline-none" onclick="viewCart();">
+                            <i class="fas fa-shopping-cart h-6 w-6"></i>
+                        </button>
+                        <a href="my-account.html">
+                            <button class="ml-3 p-1 rounded-full text-gray-700 hover:text-blue-500 focus:outline-none">
+                                <!-- Account Icon Example -->
+                                <i class="fas fa-user h-6 w-6"></i>
+                            </button>
+                        </a>
+                    </div>
+
+                    <div class="-mr-2 flex md:hidden">
+                        <button id="mobile-menu-button"
+                                class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-500 focus:outline-none">
+                            <i class="fas fa-bars h-6 w-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a href="index.html"
+                       class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Home</a>
+
+                    <a href="#products"
+                       class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-500">Products</a>
+                    <a href="#features"
+                       class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-500">Features</a>
+                    <a href="#testimonials"
+                       class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-500">Testimonials</a>
+                    <a href="#contact"
+                       class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-500">Contact</a>
+                </div>
+                <div class="pt-4 pb-3 border-t border-gray-200">
+
+                </div> 
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+
+        <section id="home" class="relative overflow-hidden bg-gradient-to-r from-blue-200 to-purple-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="text-center md:text-left">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+                            Welcome to <span class="gradient-text">iHeaven</span>
+                        </h1>
+                        <p class="text-lg md:text-xl text-gray-600 mb-8">
+                            Welcome to iHeaven – Your trusted hub for buying and selling genuine Apple products. Discover innovation, trade with confidence.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                            <a href="#products">
+                                <button
+                                    class="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full font-medium hover:opacity-90 transition duration-300">
+                                    Shop Now
+                                </button>
+                            </a>
+                            <button
+                                class="px-8 py-3 border border-gray-300 text-gray-700 rounded-full font-medium hover:bg-gray-100 transition duration-300">
+                                Learn More
+                            </button>
+                        </div>
+                    </div>
+                    <div class="relative">
+
+                        <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-1inch?wid=5120&hei=2880&fmt=p-jpg&qlt=80&.v=1693009279096"
+                             alt="iPhone 15 Pro" class="w-full max-w-md mx-auto floating rounded-2xl shadow-xl">
+                        <div class="absolute -bottom-5 -right-5 bg-white p-3 rounded-full shadow-lg">
+                            <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-full">
+                                <i class="fas fa-tag text-white text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="absolute top-0 left-0 w-full h-full -z-10 opacity-10">
+                <div class="absolute top-0 left-0 w-64 h-64 bg-blue-500 rounded-full filter blur-3xl opacity-20"></div>
+                <div class="absolute bottom-0 right-0 w-64 h-64 bg-purple-500 rounded-full filter blur-3xl opacity-20">
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="py-12 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-4">Our <span class="gradient-text">Categories</span></h2>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+                    <a href="search.html" class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition">
+                        <i class="fas fa-mobile-alt text-4xl mb-3 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent"></i>
+                        <h3 class="font-semibold text-gray-800">iPhones</h3>
+                    </a>
+
+                    <a href="search.html" class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition">
+                        <i class="fas fa-tablet-alt text-4xl mb-3 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent"></i>
+                        <h3 class="font-semibold text-gray-800">iPads</h3>
+                    </a>
+
+                    <a href="search.html" class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition">
+                        <i class="fas fa-laptop text-4xl mb-3 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent"></i>
+                        <h3 class="font-semibold text-gray-800">MacBooks</h3>
+                    </a>
+
+                    <a href="search.html" class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition">
+                        <i class="fas fa-clock text-4xl mb-3 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent"></i>
+                        <h3 class="font-semibold text-gray-800">Apple Watches</h3>
+                    </a>
+                    <a href="search.html" class="category-card bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition">
+                        <i class="fas fa-headphones text-4xl mb-3 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent"></i>
+                        <h3 class="font-semibold text-gray-800">Accessories</h3>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cart Sidebar -->
+        <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-50">
+            <div class="flex flex-col h-full">
+                <div class="flex justify-between items-center p-4 border-b">
+                    <h3 class="text-lg font-medium text-gray-900">Your Cart</h3>
+                    <button id="close-cart" class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div class="text-center py-10 text-gray-500" id="empty-cart-message">
+                        <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-4"></i>
+                        <p>Your cart is empty</p>
+                    </div>
+                </div>
+                <div class="border-t p-4">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Subtotal</span>
+                        <span  class="font-medium">LKR
+                            <span class="text-gray-500" id="cart-subtotal"> 0.00</span>
+                        </span>
+                    </div>
+                    <div class="flex justify-between mb-4">
+                        <span class="text-gray-600">Shipping</span>
+                        <span class="font-medium text-green-600">Free</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Subtotal</span>
+                        <span  class="font-medium">LKR
+                            <span class="text-gray-500" id="cart-total"> 0.00</span>
+                        </span>
+                    </div>
+                    <a href="cart.html">
+                        <button class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-full font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            View Cart
+                        </button>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Products Section -->
+        <section id="products" class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Our <span class="gradient-text">
+                            Collection</span></h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        Discover the latest Apple products with exclusive deals and warranties only at iHeaven.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" id="product-container">
+                    <!-- Product 1 -->
+                    <div class="product-card bg-white rounded-xl shadow-md overflow-hidden transition duration-300">
+                        <div class="relative">
+                            <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-finish-select-202309-6-1inch-pink?wid=5120&hei=2880&fmt=p-jpg&qlt=80&.v=1692923777978"
+                                 alt="iPhone 15" class="w-full h-64 object-contain">
+                            <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                                -15% OFF
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900">iPhone 15</h3>
+                                    <p class="text-gray-600 text-sm">Latest model with Dynamic Island</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-400 line-through text-sm">$999</p>
+                                    <p class="text-blue-600 font-bold">$849</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <span class="text-gray-600 text-sm ml-2">(128 reviews)</span>
+                            </div>
+                            <button
+                                class="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition duration-300">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Product 1 -->
+                    <div class="product-card bg-white rounded-xl shadow-md overflow-hidden transition duration-300">
+                        <div class="relative">
+                            <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-finish-select-202309-6-1inch-pink?wid=5120&hei=2880&fmt=p-jpg&qlt=80&.v=1692923777978"
+                                 alt="iPhone 15" class="w-full h-64 object-contain">
+                            <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                                -15% OFF
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900">iPhone 15</h3>
+                                    <p class="text-gray-600 text-sm">Latest model with Dynamic Island</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-400 line-through text-sm">$999</p>
+                                    <p class="text-blue-600 font-bold">$849</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <span class="text-gray-600 text-sm ml-2">(128 reviews)</span>
+                            </div>
+                            <button
+                                class="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition duration-300">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Product 1 -->
+                    <div class="product-card bg-white rounded-xl shadow-md overflow-hidden transition duration-300">
+                        <div class="relative">
+                            <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-finish-select-202309-6-1inch-pink?wid=5120&hei=2880&fmt=p-jpg&qlt=80&.v=1692923777978"
+                                 alt="iPhone 15" class="w-full h-64 object-contain">
+                            <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                                -15% OFF
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900">iPhone 15</h3>
+                                    <p class="text-gray-600 text-sm">Latest model with Dynamic Island</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-400 line-through text-sm">$999</p>
+                                    <p class="text-blue-600 font-bold">$849</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <span class="text-gray-600 text-sm ml-2">(128 reviews)</span>
+                            </div>
+                            <button
+                                class="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition duration-300">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Product 1 -->
+                    <div class="product-card bg-white rounded-xl shadow-md overflow-hidden transition duration-300">
+                        <div class="relative">
+                            <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-finish-select-202309-6-1inch-pink?wid=5120&hei=2880&fmt=p-jpg&qlt=80&.v=1692923777978"
+                                 alt="iPhone 15" class="w-full h-64 object-contain">
+                            <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                                -15% OFF
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900">iPhone 15</h3>
+                                    <p class="text-gray-600 text-sm">Latest model with Dynamic Island</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-400 line-through text-sm">$999</p>
+                                    <p class="text-blue-600 font-bold">$849</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center">
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <span class="text-gray-600 text-sm ml-2">(128 reviews)</span>
+                            </div>
+                            <button
+                                class="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition duration-300">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-12 text-center">
+                    <button
+                        class="px-8 py-3 border-2 border-blue-500 text-blue-500 rounded-full font-medium hover:bg-blue-50 transition duration-300" onclick="goToSearch();">
+                        View All Products
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-16 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Why Choose <span class="gradient-text">iHeaven</span>
+                    </h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        We're not just another Apple reseller. Here's what makes us different.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-xl shadow-md text-center hover:shadow-lg transition duration-300">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-shield-alt text-blue-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Authentic Products</h3>
+                        <p class="text-gray-600">
+                            All our products are 100% genuine Apple devices with official warranty and support.
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-xl shadow-md text-center hover:shadow-lg transition duration-300">
+                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-truck text-purple-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Fast Shipping</h3>
+                        <p class="text-gray-600">
+                            Get your order delivered within 2-3 business days with our premium shipping partners.
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-xl shadow-md text-center hover:shadow-lg transition duration-300">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-headset text-green-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">24/7 Support</h3>
+                        <p class="text-gray-600">
+                            Our Apple-certified experts are available round the clock to assist you with any queries.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials">
+            <section class="py-16 bg-gradient-to-r from-blue-500 to-purple-600">
+                <div class="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">What Our <span class="text-white">Customers
+                                Say</span></h2>
+                        <p class="text-lg text-white max-w-2xl mx-auto">
+                            Don't just take our word for it. Here's what our customers have to say about us.
+                        </p>
+                    </div>
+
+                    <!-- Horizontal Scroll Container -->
+                    <div class="flex overflow-x-auto space-x-6 py-4 px-2 scrollbar-hide" id="message-container">
+                        <!-- Card -->
+                        <div class="bg-gray-50 p-6 rounded-xl w-[350px] flex-shrink-0 animate-scroll">
+                            <!-- Card Content -->
+                            <div class="flex items-center mb-4">
+                                <div class="flex-shrink-0">
+                                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mb-0">
+                                        <i class="fas fa-user text-lg text-gray-500"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-medium text-gray-900">Sarah Johnson</h4>
+                                    <div class="flex text-yellow-400 text-xs">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic text-sm leading-relaxed">
+                                "I've bought multiple Apple products from iHeaven and they've always exceeded my expectations. The delivery was super fast and the customer service is exceptional!"
+                            </p>
+                        </div>
+                        <!-- Card -->
+                        <div class="bg-gray-50 p-6 rounded-xl w-[350px] flex-shrink-0 animate-scroll">
+                            <!-- Card Content -->
+                            <div class="flex items-center mb-4">
+                                <div class="flex-shrink-0">
+                                    <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Johnson">
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-medium text-gray-900">Sarah Johnson</h4>
+                                    <div class="flex text-yellow-400 text-xs">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic text-sm leading-relaxed">
+                                "I've bought multiple Apple products from iHeaven and they've always exceeded my expectations. The delivery was super fast and the customer service is exceptional!"
+                            </p>
+                        </div>
+                        <!-- Card -->
+                        <div class="bg-gray-50 p-6 rounded-xl w-[350px] flex-shrink-0 animate-scroll">
+                            <!-- Card Content -->
+                            <div class="flex items-center mb-4">
+                                <div class="flex-shrink-0">
+                                    <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Johnson">
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-medium text-gray-900">Sarah Johnson</h4>
+                                    <div class="flex text-yellow-400 text-xs">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic text-sm leading-relaxed">
+                                "I've bought multiple Apple products from iHeaven and they've always exceeded my expectations. The delivery was super fast and the customer service is exceptional!"
+                            </p>
+                        </div>
+                        <!-- Card -->
+                        <div class="bg-gray-50 p-6 rounded-xl w-[350px] flex-shrink-0 animate-scroll">
+                            <!-- Card Content -->
+                            <div class="flex items-center mb-4">
+                                <div class="flex-shrink-0">
+                                    <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Johnson">
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-medium text-gray-900">Sarah Johnson</h4>
+                                    <div class="flex text-yellow-400 text-xs">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic text-sm leading-relaxed">
+                                "I've bought multiple Apple products from iHeaven and they've always exceeded my expectations. The delivery was super fast and the customer service is exceptional!"
+                            </p>
+                        </div>
+                        <!-- Card -->
+                        <div class="bg-gray-50 p-6 rounded-xl w-[350px] flex-shrink-0 animate-scroll">
+                            <!-- Card Content -->
+                            <div class="flex items-center mb-4">
+                                <div class="flex-shrink-0">
+                                    <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Johnson">
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-medium text-gray-900">Sarah Johnson</h4>
+                                    <div class="flex text-yellow-400 text-xs">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 italic text-sm leading-relaxed">
+                                "I've bought multiple Apple products from iHeaven and they've always exceeded my expectations. The delivery was super fast and the customer service is exceptional!"
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Newsletter Section -->
+
+
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Get in <span class="gradient-text">Touch</span>
+                        </h2>
+                        <p class="text-gray-600 mb-8">
+                            Have questions about our products or services? Our team is here to help you with anything you
+                            need.
+                        </p>
+
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 bg-blue-100 p-3 rounded-lg">
+                                    <i class="fas fa-map-marker-alt text-blue-500"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-medium text-gray-900">Our Store</h3>
+                                    <p class="text-gray-600">590-9a ground floor, Marino mall, Galle Rd, Colombo</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 bg-purple-100 p-3 rounded-lg">
+                                    <i class="fas fa-phone-alt text-purple-500"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-medium text-gray-900">Call Us</h3>
+                                    <p class="text-gray-600">+94 76 986 3973</p>
+                                    <p class="text-gray-600">Mon-Fri: 9am-6pm</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 bg-green-100 p-3 rounded-lg">
+                                    <i class="fas fa-envelope text-green-500"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-medium text-gray-900">Email Us</h3>
+                                    <p class="text-gray-600">support@iheaven.com</p>
+                                    <p class="text-gray-600">oshanadithya637@gmail.com</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-8 rounded-xl shadow-md">
+                        <h3 class="text-xl font-bold text-gray-900 mb-6">Tell about Us</h3>
+                        <form>
+                            <div class="mb-4">
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                <input type="text" id="fname"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                <input type="text" id="lname"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email
+                                    Address</label>
+                                <input type="email" id="email"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div class="mb-6">
+                                <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                                <textarea id="message" rows="4"
+                                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"></textarea>
+                            </div>
+                            <button type="button"
+                                    class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium transition duration-300" onclick="sendMessage();">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 text-white pt-16 pb-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">iHeaven</h3>
+                        <p class="text-gray-400 text-sm">
+                            Welcome to iHeaven – Your trusted hub for buying and selling genuine Apple products. Discover innovation, trade with confidence.
+                        </p>
+                        <div class="flex space-x-4 mt-4">
+                            <a href="#" class="text-gray-400 hover:text-white">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Shop</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">iPhone</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">iPad</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Mac</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Watch</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Accessories</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Support</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Contact Us</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">FAQs</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Shipping Policy</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Returns & Refunds</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Warranty</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Company</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">About Us</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Blog</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Careers</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Privacy Policy</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">
+                        &copy; 2025 iHeaven. All rights reserved.
+                    </p>
+                    <div class="flex space-x-6 mt-4 md:mt-0">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196578.png" alt="Visa" class="h-8">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196561.png" alt="Mastercard" class="h-8">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196566.png" alt="American Express" class="h-8">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196554.png" alt="PayPal" class="h-8">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196626.png" alt="Apple Pay" class="h-8">
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script>
+            const cartButton = document.getElementById('cart-button');
+            const closeCart = document.getElementById('close-cart');
+            const cartSidebar = document.getElementById('cart-sidebar');
+            // Open cart
+            cartButton.addEventListener('click', () => {
+                cartSidebar.classList.remove('translate-x-full');
+                document.body.style.overflow = 'hidden';
+            });
+
+            // Close cart
+            closeCart.addEventListener('click', () => {
+                cartSidebar.classList.add('translate-x-full');
+                document.body.style.overflow = 'auto';
+            });
+            // Mobile menu toggle
+            document.getElementById('mobile-menu-button').addEventListener('click', function () {
+                const menu = document.getElementById('mobile-menu');
+                menu.classList.toggle('hidden');
+            });
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+
+                        // Close mobile menu if open
+                        const mobileMenu = document.getElementById('mobile-menu');
+                        if (!mobileMenu.classList.contains('hidden')) {
+                            mobileMenu.classList.add('hidden');
+                        }
+                    }
+                });
+            });
+
+            // Add animation to elements when they come into view
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-fadeIn');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            document.querySelectorAll('.product-card, .bg-white').forEach(card => {
+                observer.observe(card);
+            });
+        </script>
+        <script src="assets/js/go-to-search.js"></script>
+        <script src="assets/js/index.js"></script>
+        <script src="assets/js/content-loader.js"></script>
+        <script src="assets/js/send-message.js"></script>
+        <script src="assets/js/search-single.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+    </body>
+
+</html>

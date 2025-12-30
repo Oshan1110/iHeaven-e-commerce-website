@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Account | iHeaven</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+        <style>
+            .gradient-bg {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+
+            .account-card {
+                box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.3);
+                transition: all 0.3s ease;
+            }
+
+            .account-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 35px -15px rgba(0, 0, 0, 0.4);
+            }
+
+            .order-item {
+                transition: all 0.2s ease;
+            }
+
+            .order-item:hover {
+                background-color: rgba(102, 126, 234, 0.05);
+            }
+
+            .active-tab {
+                border-bottom: 3px solid #667eea;
+                color: #667eea;
+                font-weight: 600;
+            }
+            .file-upload {
+                position: relative;
+                display: inline-block;
+            }
+
+            .file-upload-input {
+                position: absolute;
+                left: 0;
+                top: 0;
+                opacity: 0;
+                width: 100%;
+                height: 100%;
+                cursor: pointer;
+            }
+
+            .file-upload-label {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                border: 2px dashed #d1d5db;
+                border-radius: 0.5rem;
+                padding: 1.5rem;
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+
+            .file-upload-label:hover {
+                border-color: #3b82f6;
+                background-color: #f8fafc;
+            }
+
+            .file-upload-label.has-image {
+                border-color: #10b981;
+                background-color: #ecfdf5;
+            }
+
+            .preview-image {
+                max-width: 100%;
+                max-height: 150px;
+                object-fit: contain;
+                margin-bottom: 0.5rem;
+                border-radius: 0.25rem;
+            }
+
+            .remove-image {
+                position: absolute;
+                top: 0.25rem;
+                right: 0.25rem;
+                background-color: #ef4444;
+                color: white;
+                border-radius: 50%;
+                width: 1.5rem;
+                height: 1.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                opacity: 0;
+                transition: opacity 0.2s;
+            }
+
+            .image-container:hover .remove-image {
+                opacity: 1;
+            }
+
+            .animate-pulse {
+                animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+
+            @keyframes pulse {
+                0%, 100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.5;
+                }
+            }
+            @keyframes float {
+                0% {
+                    transform: translateY(0px);
+                }
+
+                50% {
+                    transform: translateY(-15px);
+                }
+
+                100% {
+                    transform: translateY(0px);
+                }
+            }
+
+            .floating {
+                animation: float 6s ease-in-out infinite;
+            }
+
+            .gradient-text {
+                background: linear-gradient(90deg, #2998ff, #ff00ea);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+
+            .product-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+
+            .nav-link::after {
+                content: '';
+                display: block;
+                width: 0;
+                height: 2px;
+                background: #3b82f6;
+                transition: width .3s;
+            }
+
+            .nav-link:hover::after {
+                width: 100%;
+            }
+            .search-container {
+                display: flex;
+                align-items: center;
+                gap: 4px; /* reduced gap */
+                margin-left: auto;
+                margin-right: 2px;
+                background: #f1f1f1;
+                padding: 3px 4px; /* reduced padding */
+                border-radius: 16px; /* slightly smaller */
+                transition: all 0.3s ease;
+            }
+
+            .search-container input {
+                border: none;
+                background: transparent;
+                outline: none;
+                padding: 4px;
+                width: 120px; /* reduced width */
+                font-size: 13px; /* optional: smaller text */
+                transition: width 0.3s ease;
+            }
+
+            .search-container button {
+                background: linear-gradient(to right, #4f46e5, #9333ea);
+                border: none;
+                padding: 6px 14px; /* reduced button size */
+                border-radius: 16px;
+                color: white;
+                cursor: pointer;
+                font-size: 12px;
+                font-weight: bold;
+            }
+
+            @media (max-width: 768px) {
+                .search-container input {
+                    width: 70px;
+                }
+
+                .search-container {
+                    margin-right: 8px;
+                }
+            }
+        </style>
+    </head>
+
+    <body class="bg-gray-50 font-sans" onload="loadData(); getCityData(); loadProductData(); productListing(); orderListing();">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-lg sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 flex items-center">
+                            <i class="fab fa-apple text-gray-900 text-3xl mr-2"></i>
+                            <span class="text-xl font-bold text-gray-900">i<span class="gradient-text">Heaven</span></span>
+                        </div>
+                        <div class="hidden md:block">
+                            <div class="ml-10 flex items-baseline space-x-4">
+                                <a href="index.html"
+                                   class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Home</a>
+                                <a href="#products"
+                                   class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Products</a>
+                                <a href="#features"
+                                   class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Features</a>
+                                <a href="#testimonials"
+                                   class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Testimonials</a>
+                                <a href="#contact"
+                                   class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Contact</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-container">
+                        <input type="text" id="serchP" placeholder="Search products..." />
+                        <!--<a href="search-single.html">-->
+                            <button type="button" id="searchBtn" onclick="searchSingle()">Go</button>
+                        <!--</a>-->
+                    </div>
+                    <div class="ml-4 flex items-center md:ml-6">
+                        <button id="cart-button" class="ml-3 p-1 rounded-full text-gray-700 hover:text-blue-500 focus:outline-none" onclick="viewCart();">
+                            <i class="fas fa-shopping-cart h-6 w-6"></i>
+                        </button>
+                        <a href="my-account.html">
+                            <button class="ml-3 p-1 rounded-full text-gray-700 hover:text-blue-500 focus:outline-none">
+                                <!-- Account Icon Example -->
+                                <i class="fas fa-user h-6 w-6"></i>
+                            </button>
+                        </a>
+                        <a href="sign-in.html">
+                            <button
+                                class="ml-3 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full text-sm font-medium hover:opacity-90 transition duration-300">
+                                Sign In
+                            </button>
+                        </a>
+                    </div>
+
+                    <div class="-mr-2 flex md:hidden">
+                        <button id="mobile-menu-button"
+                                class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-500 focus:outline-none">
+                            <i class="fas fa-bars h-6 w-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a href="index.html"
+                       class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-500">Home</a>
+
+                    <a href="#products"
+                       class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-500">Products</a>
+                    <a href="#features"
+                       class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-500">Features</a>
+                    <a href="#testimonials"
+                       class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-500">Testimonials</a>
+                    <a href="#contact"
+                       class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-500">Contact</a>
+                </div>
+                <div class="pt-4 pb-3 border-t border-gray-200">
+
+                </div> 
+            </div>
+        </nav>
+
+        <!-- Cart Sidebar -->
+        <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-50">
+            <div class="flex flex-col h-full">
+                <div class="flex justify-between items-center p-4 border-b">
+                    <h3 class="text-lg font-medium text-gray-900">Your Cart</h3>
+                    <button id="close-cart" class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div class="text-center py-10 text-gray-500" id="empty-cart-message">
+                        <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-4"></i>
+                        <p>Your cart is empty</p>
+                    </div>
+                </div>
+                <div class="border-t p-4">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Subtotal</span>
+                        <span  class="font-medium">LKR
+                            <span class="text-gray-500" id="cart-subtotal"> 0.00</span>
+                        </span>
+                    </div>
+                    <div class="flex justify-between mb-4">
+                        <span class="text-gray-600">Shipping</span>
+                        <span class="font-medium text-green-600">Free</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Subtotal</span>
+                        <span  class="font-medium">LKR
+                            <span class="text-gray-500" id="cart-total"> 0.00</span>
+                        </span>
+                    </div>
+                    <a href="cart.html">
+                        <button class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-full font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            View Cart
+                        </button>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Sidebar -->
+                <div class="w-full md:w-1/4">
+                    <div class="account-card bg-white rounded-lg p-6 mb-6">
+                        <div class="flex flex-col items-center mb-6">
+                            <div class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center mb-4">
+                                <i class="fas fa-user text-4xl text-gray-500"></i>
+                            </div>
+                            <h2 class="text-xl font-semibold" id="username">John Doe</h2>
+                            <p class="text-gray-500" id="verify">Premium Member</p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <button id="account-tab" class="w-full text-left py-2 px-4 rounded active-tab">
+                                <i class="fas fa-user-circle mr-2"></i> Account Details
+                            </button>
+                            <button id="orders-tab" class="w-full text-left py-2 px-4 rounded hover:text-indigo-600">
+                                <i class="fas fa-shopping-bag mr-2"></i> My Orders
+                            </button>
+                            <button id="sell-tab" class="w-full text-left py-2 px-4 rounded hover:text-indigo-600">
+                                <i class="fas fa-box mr-2"></i> Sell Products
+                            </button>
+                            <button id="product-tab" class="w-full text-left py-2 px-4 rounded hover:text-indigo-600">
+                                <i class="fas fa-warehouse mr-2"></i> My Products
+                            </button>
+                            <button id="logout-btn" class="w-full text-left py-2 px-4 rounded hover:text-red-600">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Log Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content Area -->
+                <div class="w-full md:w-3/4">
+                    <!-- Account Details Section -->
+                    <div id="account-section" class="account-card bg-white rounded-lg p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-semibold">Account Details</h2>
+                            <div class="flex items-center space-x-4">
+                                <button class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full hover:opacity-90 transition duration-300" onclick="saveChanges();">
+                                    Save Changes
+                                </button>
+                            </div>
+
+                        </div>
+                        <p class="text-red-600 mb-3 " id="message"></p>
+                        <div class="grid  mb-4">
+                            <!-- Personal Information -->
+                            <div class="mb-8">
+                                <h3 class="text-lg font-medium mb-4">Personal Information</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm text-gray-500 mb-1" >First Name</label>
+                                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                                               id="firstName">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm text-gray-500 mb-1" >Last Name</label>
+                                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                                               id="lastName" >
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm text-gray-500 mb-1 " >Email</label>
+                                        <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg" disabled
+                                               id="email">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm text-gray-500 mb-1" >Mobile</label>
+                                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                                               id="mobile">
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Shipping Address -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-medium mb-4">Shipping Address</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm text-gray-500 mb-1">Address Line 1</label>
+                                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                                           placeholder="123 Cloud Street" id="lineOne">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-500 mb-1">Address Line 2</label>
+                                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                                           placeholder="San Francisco" id="lineTwo">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-500 mb-1">Postal Code</label>
+                                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                                           placeholder="94107" id="postalCode">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-500 mb-1">City</label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" id="citySelect">
+                                        <option value="0" >Select</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <!-- Account Security -->
+                        <div class="mb-3">
+                            <h3 class="text-lg font-medium mb-4">Account Security</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                                <div>
+                                    <label class="block text-sm text-gray-500 mb-1">Password</label>
+                                    <input type="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                                           id="password" disabled>
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-500 mb-1">New Password</label>
+                                    <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                                           id="newPassword">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-500 mb-1">Confirm Password</label>
+                                    <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                                           id="confirmPassword">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container mx-auto px-4 w-full">
+                        <div id="sell-section" class="account-card bg-white rounded-lg p-6 hidden">
+
+
+                            <!-- Form -->
+                            <form class="p-4 space-y-6">
+                                <h2 class="text-2xl font-semibold mt-2">Product Selling</h2>
+                                <!-- Brand and Model Row -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Brand -->
+                                    <div>
+                                        <label for="brand" class="block text-sm font-medium text-gray-700 mb-1">Category <span class="text-red-500">*</span></label>
+                                        <div class="relative">
+                                            <select id="brand" onchange="loadModels();" name="brand" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white">
+                                                <option value="" disabled selected>Select brand</option>
+                                            </select>
+                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                <i class="fas fa-chevron-down text-gray-400"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Model -->
+                                    <div>
+                                        <label for="model" class="block text-sm font-medium text-gray-700 mb-1">Model <span class="text-red-500">*</span></label>
+                                        <div class="relative">
+                                            <select id="model" name="model" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white">
+                                                <option value="a" disabled selected>Select model</option>
+                                            </select>
+                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                <i class="fas fa-chevron-down text-gray-400"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Title -->
+                                <div>
+                                    <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Title <span class="text-red-500">*</span></label>
+                                    <input type="text" id="title" name="title" placeholder="e.g. iPhone 14 Pro Max - Like New" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+
+                                <!-- Description -->
+                                <div>
+                                    <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description <span class="text-red-500">*</span></label>
+                                    <textarea id="desc" name="description" rows="4" placeholder="Provide detailed information about your product..." class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                </div>
+
+                                <!-- Storage, Color, Condition Row -->
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <!-- Storage -->
+                                    <div>
+                                        <label for="storage" class="block text-sm font-medium text-gray-700 mb-1">Storage <span class="text-red-500">*</span></label>
+                                        <div class="relative">
+                                            <select id="storage" name="storage" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white">
+                                                <option value="" disabled selected>Select storage</option>
+                                            </select>
+                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                <i class="fas fa-chevron-down text-gray-400"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Color -->
+                                    <div>
+                                        <label for="color" class="block text-sm font-medium text-gray-700 mb-1">Color <span class="text-red-500">*</span></label>
+                                        <div class="relative">
+                                            <select id="color" name="color" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white">
+                                                <option value="" disabled selected>Select color</option>
+                                            </select>
+                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                <i class="fas fa-chevron-down text-gray-400"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Condition -->
+                                    <div>
+                                        <label for="condition" class="block text-sm font-medium text-gray-700 mb-1">Condition</label>
+                                        <div class="relative">
+                                            <select id="condition" name="condition" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white">
+                                                <option value="" disabled selected>Select condition</option>
+                                            </select>
+                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                <i class="fas fa-chevron-down text-gray-400"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Price and Quantity Row -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Price -->
+                                    <div>
+                                        <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price</label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500">$</span>
+                                            </div>
+                                            <input type="number" id="price" name="price" placeholder="0.00" min="0" step="0.01" class="w-full pl-8 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        </div>
+                                    </div>
+
+                                    <!-- Quantity -->
+                                    <div>
+                                        <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">Quantity <span class="text-red-500">*</span></label>
+                                        <input type="number" id="qty" name="quantity" placeholder="1" min="1" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
+                                </div>
+
+                                <!-- Image Upload Section -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-3">Product Images <span class="text-red-500">*</span> <span class="text-xs text-gray-500">(Upload at least 1 image, max 3)</span></label>
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <!-- Image 1 -->
+                                        <div class="file-upload">
+                                            <input type="file" id="img1" name="image1" accept="image/*" class="file-upload-input" onchange="previewImage(this, 1)">
+                                            <label for="image1" id="label1" class="file-upload-label">
+                                                <i class="fas fa-camera text-gray-400 text-3xl mb-2"></i>
+                                                <span class="text-sm text-gray-600">Click to upload</span>
+                                                <span class="text-xs text-gray-500">or drag and drop</span>
+                                            </label>
+                                            <div id="preview-container1" class="hidden image-container relative">
+                                                <img id="preview1" class="preview-image" src="" alt="Preview">
+                                                <span class="remove-image" onclick="removeImage(1)">×</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Image 2 -->
+                                        <div class="file-upload">
+                                            <input type="file" id="img2" name="image2" accept="image/*" class="file-upload-input" onchange="previewImage(this, 2)">
+                                            <label for="image2" id="label2" class="file-upload-label">
+                                                <i class="fas fa-image text-gray-400 text-3xl mb-2"></i>
+                                                <span class="text-sm text-gray-600">Click to upload</span>
+                                                <span class="text-xs text-gray-500">or drag and drop</span>
+                                            </label>
+                                            <div id="preview-container2" class="hidden image-container relative">
+                                                <img id="preview2" class="preview-image" src="" alt="Preview">
+                                                <span class="remove-image" onclick="removeImage(2)">×</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Image 3 -->
+                                        <div class="file-upload">
+                                            <input type="file" id="img3" name="image3" accept="image/*" class="file-upload-input" onchange="previewImage(this, 3)">
+                                            <label for="image3" id="label3" class="file-upload-label">
+                                                <i class="fas fa-images text-gray-400 text-3xl mb-2"></i>
+                                                <span class="text-sm text-gray-600">Click to upload</span>
+                                                <span class="text-xs text-gray-500">or drag and drop</span>
+                                            </label>
+                                            <div id="preview-container3" class="hidden image-container relative">
+                                                <img id="preview3" class="preview-image" src="" alt="Preview">
+                                                <span class="remove-image" onclick="removeImage(3)">×</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="pt-4">
+                                    <button onclick="saveProduct();" type="button" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-full transition duration-200 flex items-center justify-center">
+                                        <i class="fas fa-upload mr-2"></i> List Product for Sale
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
+                    <!-- Orders Section (Hidden by default) -->
+                    <div id="orders-section" class="account-card bg-white rounded-lg p-6 hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-semibold">My Orders</h2>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Order #</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Product</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Date</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Price</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            qty</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200" id="order-container">
+                                    <tr class="order-item">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#IHV-78945</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">June 12, 2023</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">June 12, 2023</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">June 12, 2023</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">June 12, 2023</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- product Section (Hidden by default) -->
+                    <div id="product-section" class="account-card bg-white rounded-lg p-6 hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-semibold">My Products</h2>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Title #</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Date</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Price</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Storage</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Color</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200" id="p-container">
+                                    <tr class="order-item">
+                                        <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">No products</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 text-white pt-16 pb-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">iHeaven</h3>
+                        <p class="text-gray-400 text-sm">
+                            Your premium destination for authentic Apple products. Experience innovation at its finest.
+                        </p>
+                        <div class="flex space-x-4 mt-4">
+                            <a href="#" class="text-gray-400 hover:text-white">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Shop</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">iPhone</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">iPad</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Mac</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Watch</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Accessories</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Support</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Contact Us</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">FAQs</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Shipping Policy</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Returns & Refunds</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Warranty</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Company</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">About Us</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Blog</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Careers</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Privacy Policy</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">
+                        &copy; 2023 iHeaven. All rights reserved.
+                    </p>
+                    <div class="flex space-x-6 mt-4 md:mt-0">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196578.png" alt="Visa" class="h-8">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196561.png" alt="Mastercard" class="h-8">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196566.png" alt="American Express" class="h-8">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196554.png" alt="PayPal" class="h-8">
+                        <img src="https://cdn-icons-png.flaticon.com/512/196/196626.png" alt="Apple Pay" class="h-8">
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Logout Modal -->
+        <div id="logout-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+            <div class="bg-white rounded-lg p-6 max-w-md w-full">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold">Confirm Logout</h3>
+                    <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <p class="mb-6 text-gray-600">Are you sure you want to log out of your iHeaven account?</p>
+                <div class="flex justify-end space-x-4">
+                    <button id="cancel-logout"
+                            class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">Cancel</button>
+                    <button id="confirm-logout" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700" onclick="signOut();">Log
+                        Out</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const cartButton = document.getElementById('cart-button');
+            const closeCart = document.getElementById('close-cart');
+            const cartSidebar = document.getElementById('cart-sidebar');
+            // Open cart
+            cartButton.addEventListener('click', () => {
+                cartSidebar.classList.remove('translate-x-full');
+                document.body.style.overflow = 'hidden';
+            });
+
+            // Close cart
+            closeCart.addEventListener('click', () => {
+                cartSidebar.classList.add('translate-x-full');
+                document.body.style.overflow = 'auto';
+            });
+            // Mobile menu toggle
+            document.getElementById('mobile-menu-button').addEventListener('click', function () {
+                const menu = document.getElementById('mobile-menu');
+                menu.classList.toggle('hidden');
+            });
+
+            // Tab switching
+            const accountTab = document.getElementById('account-tab');
+            const ordersTab = document.getElementById('orders-tab');
+            const sellTab = document.getElementById('sell-tab');
+            const accountSection = document.getElementById('account-section');
+            const ordersSection = document.getElementById('orders-section');
+            const sellSection = document.getElementById('sell-section');
+            const productTab = document.getElementById('product-tab');
+            const productSection = document.getElementById('product-section');
+
+            accountTab.addEventListener('click', () => {
+                accountSection.classList.remove('hidden');
+                ordersSection.classList.add('hidden');
+                accountTab.classList.add('active-tab');
+                ordersTab.classList.remove('active-tab');
+                sellSection.classList.add('hidden');
+                sellTab.classList.remove('active-tab');
+                productSection.classList.add('hidden');
+                productTab.classList.remove('active-tab');
+            });
+
+            ordersTab.addEventListener('click', () => {
+                accountSection.classList.add('hidden');
+                ordersSection.classList.remove('hidden');
+                accountTab.classList.remove('active-tab');
+                ordersTab.classList.add('active-tab');
+                sellSection.classList.add('hidden');
+                sellTab.classList.remove('active-tab');
+                productSection.classList.add('hidden');
+                productTab.classList.remove('active-tab');
+            });
+
+            sellTab.addEventListener('click', () => {
+                accountSection.classList.add('hidden');
+                ordersSection.classList.add('hidden');
+                sellSection.classList.remove('hidden');
+                accountTab.classList.remove('active-tab');
+                ordersTab.classList.remove('active-tab');
+                sellTab.classList.add('active-tab');
+                productSection.classList.add('hidden');
+                productTab.classList.remove('active-tab');
+            });
+
+            productTab.addEventListener('click', () => {
+                accountSection.classList.add('hidden');
+                ordersSection.classList.add('hidden');
+                sellSection.classList.remove('hidden');
+                accountTab.classList.remove('active-tab');
+                sellSection.classList.add('hidden');
+                sellTab.classList.remove('active-tab');
+                productSection.classList.remove('hidden');
+                productTab.classList.add('active-tab');
+            });
+
+            // Logout modal
+            const logoutBtn = document.getElementById('logout-btn');
+            const logoutModal = document.getElementById('logout-modal');
+            const closeModal = document.getElementById('close-modal');
+            const cancelLogout = document.getElementById('cancel-logout');
+            const confirmLogout = document.getElementById('confirm-logout');
+
+            logoutBtn.addEventListener('click', () => {
+                logoutModal.classList.remove('hidden');
+            });
+
+            closeModal.addEventListener('click', () => {
+                logoutModal.classList.add('hidden');
+            });
+
+            cancelLogout.addEventListener('click', () => {
+                logoutModal.classList.add('hidden');
+            });
+
+
+        </script>
+        <script src="assets/js/sign-out.js"></script>
+        <script src="assets/js/my-account.js"></script>
+        <script src="assets/js/product-listing.js"></script>
+        <script src="assets/js/content-loader.js"></script>
+        <script src="assets/js/search-single.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+    </body>
+
+</html>
