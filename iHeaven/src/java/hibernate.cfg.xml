@@ -9,9 +9,9 @@
         <!-- Database connection settings -->
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/i_heaven?allowPublicKeyRetrieval=true&amp;useSSL=false</property>
-        <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">Adhiya2003#</property>
+        <property name="hibernate.connection.url">jdbc:mysql://gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/i_heaven?sslMode=REQUIRED&amp;trustServerCertificate=true&amp;fallbackToSystemKeyStore=false</property>
+        <property name="hibernate.connection.username">3mC7pk1SAmkrme5.root</property>
+        <property name="hibernate.connection.password">0q9baWdyUYpVnyAR</property>
         <property name="hibernate.show_sql">true</property>
         <mapping class = "Hibernate.User"/>
         <mapping class = "Hibernate.City"/>
